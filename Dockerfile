@@ -26,8 +26,8 @@ COPY agents ./agents
 WORKDIR /app/shared
 RUN npm run build
 
-# Create non-root user
-RUN addgroup -g 1000 agent && adduser -u 1000 -G agent -s /bin/sh -D agent
+# Create non-root user (use available gid/uid)
+RUN addgroup agent 2>/dev/null || true && adduser -G agent -s /bin/sh -D agent 2>/dev/null || true
 
 # Create directories
 RUN mkdir -p /workspace /moltbook /logs /config && \
