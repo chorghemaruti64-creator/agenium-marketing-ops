@@ -1,0 +1,18 @@
+[Unit]
+Description=Marketing Agent Swarm - Orchestrator
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=marketing
+Group=marketing
+WorkingDirectory=/opt/marketing-ops
+Environment=TZ=Europe/Berlin
+ExecStart=/opt/marketing-ops/bin/run-once.sh --live
+StandardOutput=append:/opt/marketing-ops/logs/orchestrator.log
+StandardError=append:/opt/marketing-ops/logs/orchestrator.log
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target

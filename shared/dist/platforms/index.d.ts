@@ -9,6 +9,7 @@ export { postToX } from './x.js';
 export { postToReddit } from './reddit.js';
 export { postToHN, generateHNDraft } from './hn.js';
 export { postToDiscord } from './discord.js';
+export { runPreflight, getValidPlatforms, type PreflightResult } from './preflight.js';
 import type { Platform, PlatformAction, PlatformResult, ConnectorConfig } from './types.js';
 /**
  * Unified platform dispatcher

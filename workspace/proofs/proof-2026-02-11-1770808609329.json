@@ -1,0 +1,39 @@
+{
+  "id": "proof-2026-02-11-1770808609329",
+  "date": "2026-02-11",
+  "generatedAt": "2026-02-11T11:16:49.330Z",
+  "hash": "770e02f880cc8c33d451fcb2e683c755f0de23019abf7b2bd4b5c7af79713b4d",
+  "contents": {
+    "moltbookEvents": 11,
+    "briefs": [
+      "2026-02-11.md"
+    ],
+    "drafts": [
+      "discord-embed-1770808557309-dxe8.json",
+      "github-discussion-1770808557309-h4q9.json",
+      "telegram-announcement-1770808557309-45xz.json",
+      "x-thread-1770808557309-zjb4.json"
+    ],
+    "posts": [],
+    "analyticsReports": [
+      "2026-02-11.json"
+    ],
+    "partnershipLeads": []
+  },
+  "verification": {
+    "allFilesPresent": true,
+    "hashIntegrity": true,
+    "eventCounts": {
+      "AGENT_ACTION": 10,
+      "ERROR": 1
+    }
+  },
+  "artifacts": [
+    "briefs/2026-02-11.md",
+    "content/drafts/2026-02-11/discord-embed-1770808557309-dxe8.json",
+    "content/drafts/2026-02-11/github-discussion-1770808557309-h4q9.json",
+    "content/drafts/2026-02-11/telegram-announcement-1770808557309-45xz.json",
+    "content/drafts/2026-02-11/x-thread-1770808557309-zjb4.json",
+    "analytics/daily/2026-02-11.json"
+  ]
+}

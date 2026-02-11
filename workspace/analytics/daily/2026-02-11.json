@@ -1,11 +1,18 @@
 {
   "date": "2026-02-11",
   "summary": {
-    "totalEvents": 3,
+    "totalEvents": 10,
     "successfulPosts": 0,
     "failedPosts": 0,
     "policyBlocks": 0,
-    "platformBreakdown": {}
+    "platformBreakdown": {
+      "github": 1,
+      "telegram": 1,
+      "x": 1,
+      "reddit": 1,
+      "discord": 1,
+      "hn": 1
+    }
   },
   "kpis": {
     "postSuccessRate": 100,
@@ -13,12 +20,16 @@
     "policyComplianceRate": 100
   },
   "moltbookStats": {
-    "totalLogs": 3,
+    "totalLogs": 10,
     "byEventType": {
-      "AGENT_ACTION": 3
+      "AGENT_ACTION": 9,
+      "ERROR": 1
     },
     "byStatus": {
-      "success": 3
+      "success": 2,
+      "error": 1,
+      "blocked": 6,
+      "failed": 1
     }
   }
 }

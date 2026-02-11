@@ -1,0 +1,12 @@
+[Unit]
+Description=Marketing Agent Swarm - Community Monitor Timer (every 2h)
+Requires=marketing-community.service
+
+[Timer]
+# Every 2 hours
+OnCalendar=*-*-* 00/2:00:00 Europe/Berlin
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

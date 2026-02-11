@@ -1,0 +1,12 @@
+[Unit]
+Description=Marketing Agent Swarm - Daily Orchestrator Timer
+Requires=marketing-orchestrator.service
+
+[Timer]
+# Daily at 09:00 Europe/Berlin
+OnCalendar=*-*-* 09:00:00 Europe/Berlin
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

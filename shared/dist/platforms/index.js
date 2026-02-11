@@ -9,6 +9,7 @@ export { postToX } from './x.js';
 export { postToReddit } from './reddit.js';
 export { postToHN, generateHNDraft } from './hn.js';
 export { postToDiscord } from './discord.js';
+export { runPreflight, getValidPlatforms } from './preflight.js';
 import { postToGitHub } from './github.js';
 import { postToTelegram } from './telegram.js';
 import { postToX } from './x.js';

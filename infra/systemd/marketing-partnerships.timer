@@ -1,0 +1,12 @@
+[Unit]
+Description=Marketing Agent Swarm - Partnerships Timer (Weekly Monday 10:00)
+Requires=marketing-partnerships.service
+
+[Timer]
+# Weekly on Monday at 10:00 Europe/Berlin
+OnCalendar=Mon *-*-* 10:00:00 Europe/Berlin
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
