@@ -88,13 +88,78 @@ export type {
   DedupeEntry,
 } from './store/sqlite.js';
 
-// Moltbook
+// Moltbook Types
+export type {
+  MoltEvent,
+  EventType,
+  SourceAgent,
+  EventStatus,
+  Platform as MoltPlatform,
+  ActionType as MoltActionType,
+  PeriodSummary,
+} from './moltbook/types.js';
+
+export { createEvent } from './moltbook/types.js';
+
+// Moltbook Ledger
+export {
+  appendEvent,
+  appendEventBatch,
+  writeEvent as writeMoltEvent,
+  logPolicyDecision,
+  logPlatformAttempt,
+  logPlatformResult,
+  logRetryScheduled,
+  logCircuitBreaker,
+  logArtifact,
+  logPipelineStart,
+  logPipelineEnd,
+  getEventFiles,
+  checkIntegrity,
+} from './moltbook/ledger.js';
+
+// Moltbook Reader
+export {
+  getAvailableDates,
+  readEventsByDate,
+  readEventsByDateRange,
+  findByFingerprint,
+  findByTraceId,
+  findByPlatform as findEventsByPlatform,
+  findByStatus as findEventsByStatus,
+  findByEventType,
+  findByAgent,
+  getLatestEvents,
+  getFailedEvents,
+  getBlockedEvents,
+  getSuccessfulPosts,
+  getCircuitBreakerChanges,
+  getPipelineRuns,
+  getArtifacts,
+  countBy,
+  getTopDenyReasons,
+  query as queryEvents,
+} from './moltbook/reader.js';
+
+export type { QueryFilters } from './moltbook/reader.js';
+
+// Moltbook Summarize
+export {
+  generateSummary,
+  formatSummaryAsMarkdown,
+  generateDailySummary,
+  generateWeeklySummary,
+  backfillSummaries,
+} from './moltbook/summarize.js';
+
+// Moltbook Audit (backward compatible)
 export {
   audit,
   createAuditEvent,
-  writeEvent,
-  appendDailySummary,
   createMockAudit,
+  auditPlatformAttempt,
+  auditPlatformResult,
+  auditArtifact,
 } from './moltbook/audit.js';
 
 export type {

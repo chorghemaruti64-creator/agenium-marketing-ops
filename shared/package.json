@@ -9,7 +9,9 @@
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo": "npx tsx policy/demo.ts",
+    "demo:policy": "npx tsx policy/demo.ts",
+    "demo:moltbook": "npx tsx moltbook/demo.ts",
+    "demo": "npm run demo:policy && npm run demo:moltbook",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {

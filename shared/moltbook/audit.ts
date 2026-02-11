@@ -1,10 +1,17 @@
 /**
  * Moltbook Audit Module
- * Writes JSON events and daily markdown summaries
+ * High-level audit interface that uses the ledger
+ * Backward compatible with Phase 2 API
  */
 
-import { mkdirSync, writeFileSync, appendFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { MoltEvent, SourceAgent, Platform, ActionType } from './types.js';
+import { 
+  logPolicyDecision,
+  logPlatformAttempt,
+  logPlatformResult,
+  logArtifact,
+  appendEvent,
+} from './ledger.js';
 import { PlatformAction, PolicyDecision } from '../policy/types.js';
 
 export interface AuditEvent {
@@ -21,40 +28,15 @@ export interface AuditEvent {
   evidence_count: number;
 }
 
-const MOLTBOOK_PATH = process.env.MOLTBOOK_PATH || '/opt/marketing-ops/moltbook';
-
 /**
- * Ensure directory exists
- */
-function ensureDir(path: string): void {
-  if (!existsSync(path)) {
-    mkdirSync(path, { recursive: true });
-  }
-}
-
-/**
- * Get today's date in YYYY-MM-DD format
- */
-function getToday(): string {
-  return new Date().toISOString().split('T')[0];
-}
-
-/**
- * Get current timestamp in ISO format
- */
-function getNow(): string {
-  return new Date().toISOString();
-}
-
-/**
- * Create audit event from action and decision
+ * Create audit event from action and decision (backward compatible)
  */
 export function createAuditEvent(
   action: PlatformAction,
   decision: PolicyDecision
 ): AuditEvent {
   return {
-    timestamp: getNow(),
+    timestamp: new Date().toISOString(),
     fingerprint: decision.action_fingerprint,
     platform: action.platform,
     action_type: action.action_type,
@@ -69,64 +51,32 @@ export function createAuditEvent(
 }
 
 /**
- * Write JSON event to moltbook/events/YYYY-MM-DD/<fingerprint>.json
+ * Audit a policy decision
+ * This is the main entry point used by the policy engine
  */
-export function writeEvent(event: AuditEvent): string {
-  const today = getToday();
-  const eventsDir = join(MOLTBOOK_PATH, 'events', today);
-  ensureDir(eventsDir);
+export function audit(
+  action: PlatformAction, 
+  decision: PolicyDecision,
+  sourceAgent: SourceAgent = 'orchestrator',
+  traceId?: string
+): AuditEvent {
+  // Create the backward-compatible audit event
+  const auditEvent = createAuditEvent(action, decision);
   
-  const filename = `${event.fingerprint.substring(0, 16)}_${Date.now()}.json`;
-  const filepath = join(eventsDir, filename);
+  // Log to the new ledger system
+  logPolicyDecision(
+    sourceAgent,
+    action.platform as Platform,
+    action.action_type as ActionType,
+    decision.action_fingerprint,
+    decision.allow,
+    decision.reason_codes,
+    decision.risk_score,
+    decision.redacted_text,
+    traceId
+  );
   
-  writeFileSync(filepath, JSON.stringify(event, null, 2));
-  
-  return filepath;
-}
-
-/**
- * Append one-line entry to daily markdown
- */
-export function appendDailySummary(event: AuditEvent): void {
-  const today = getToday();
-  const dailyDir = join(MOLTBOOK_PATH, 'daily');
-  ensureDir(dailyDir);
-  
-  const filepath = join(dailyDir, `${today}.md`);
-  
-  // Create header if file doesn't exist
-  if (!existsSync(filepath)) {
-    const header = `# Moltbook Daily Log: ${today}\n\n| Time | Platform | Action | Decision | Risk | Reason |\n|------|----------|--------|----------|------|--------|\n`;
-    writeFileSync(filepath, header);
-  }
-  
-  // Format time as HH:MM:SS
-  const time = event.timestamp.split('T')[1].split('.')[0];
-  
-  // Append entry
-  const emoji = event.decision === 'allow' ? '✅' : '❌';
-  const reasons = event.reason_codes.join(', ') || '-';
-  const line = `| ${time} | ${event.platform} | ${event.action_type} | ${emoji} ${event.decision} | ${event.risk_score} | ${reasons} |\n`;
-  
-  appendFileSync(filepath, line);
-}
-
-/**
- * Write full audit trail for an action
- * Called by policy engine on every decision
- */
-export function audit(action: PlatformAction, decision: PolicyDecision): AuditEvent {
-  const event = createAuditEvent(action, decision);
-  
-  try {
-    writeEvent(event);
-    appendDailySummary(event);
-  } catch (error) {
-    // Log error but don't fail - audit is best-effort
-    console.error('[Moltbook] Audit write failed:', error);
-  }
-  
-  return event;
+  return auditEvent;
 }
 
 /**
@@ -147,3 +97,97 @@ export function createMockAudit(): {
     events,
   };
 }
+
+/**
+ * Audit a platform attempt (for distribution agent)
+ */
+export function auditPlatformAttempt(
+  platform: Platform,
+  actionType: ActionType,
+  fingerprint: string,
+  traceId: string,
+  sourceAgent: SourceAgent = 'distribution',
+  retryCount: number = 0
+): MoltEvent {
+  return logPlatformAttempt(
+    sourceAgent,
+    platform,
+    actionType,
+    fingerprint,
+    traceId,
+    retryCount
+  );
+}
+
+/**
+ * Audit a platform result (for distribution agent)
+ */
+export function auditPlatformResult(
+  platform: Platform,
+  actionType: ActionType,
+  fingerprint: string,
+  traceId: string,
+  success: boolean,
+  sourceAgent: SourceAgent = 'distribution',
+  options?: {
+    httpStatus?: number;
+    responseId?: string;
+    permalink?: string;
+    errorMessage?: string;
+    latencyMs?: number;
+  }
+): MoltEvent {
+  return logPlatformResult(
+    sourceAgent,
+    platform,
+    actionType,
+    fingerprint,
+    traceId,
+    success,
+    options
+  );
+}
+
+/**
+ * Audit artifact creation
+ */
+export function auditArtifact(
+  path: string,
+  sha256: string,
+  kind: 'content_draft' | 'screenshot' | 'log' | 'outreach_list' | 'report' | 'other',
+  sizeBytes: number,
+  sourceAgent: SourceAgent = 'content',
+  metadata?: Record<string, any>
+): MoltEvent {
+  return logArtifact(sourceAgent, path, sha256, kind, sizeBytes, metadata);
+}
+
+// Re-export for convenience
+export { 
+  logPolicyDecision,
+  logPlatformAttempt,
+  logPlatformResult,
+  logRetryScheduled,
+  logCircuitBreaker,
+  logArtifact,
+  logPipelineStart,
+  logPipelineEnd,
+  appendEvent,
+  appendEventBatch,
+  writeEvent,
+} from './ledger.js';
+
+export {
+  readEventsByDate,
+  findByFingerprint,
+  findByTraceId,
+  findByPlatform,
+  findByStatus,
+  getLatestEvents,
+  query,
+} from './reader.js';
+
+export {
+  generateDailySummary,
+  generateWeeklySummary,
+} from './summarize.js';
