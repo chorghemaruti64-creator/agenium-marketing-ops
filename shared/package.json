@@ -1,0 +1,28 @@
+{
+  "name": "@marketing-ops/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Shared modules for Marketing Agent Swarm",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "npx tsx policy/demo.ts",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/sql.js": "^1.4.9",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "tsx": "^4.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
