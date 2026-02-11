@@ -12,7 +12,10 @@ RUN apk add --no-cache curl
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 
-# Install all dependencies (including dev for tsx)
+# Install tsx globally for running TypeScript
+RUN npm install -g tsx
+
+# Install shared module dependencies
 WORKDIR /app/shared
 RUN npm install
 
