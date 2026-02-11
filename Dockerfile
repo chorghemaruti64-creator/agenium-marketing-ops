@@ -1,5 +1,5 @@
 # Marketing Agent Swarm Dockerfile
-# Uses tsx to run TypeScript directly
+# Single-stage build using tsx for TypeScript
 
 FROM node:20-alpine
 
@@ -14,10 +14,9 @@ COPY shared/package*.json ./shared/
 
 # Install all dependencies (including dev for tsx)
 WORKDIR /app/shared
-RUN npm ci
+RUN npm install
 
 WORKDIR /app
-RUN npm ci --ignore-scripts 2>/dev/null || true
 
 # Copy source files
 COPY shared ./shared

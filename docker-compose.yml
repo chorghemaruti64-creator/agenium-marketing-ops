@@ -1,7 +1,6 @@
 # Marketing Agent Swarm - Docker Compose
 # 8 autonomous marketing agents with shared volumes
 
-version: '3.8'
 
 services:
   # ============================================================================
@@ -10,7 +9,6 @@ services:
   orchestrator:
     build:
       context: .
-      target: production
     container_name: marketing-orchestrator
     command: ["npx", "tsx", "agents/orchestrator/index.ts"]
     environment:
@@ -59,7 +57,7 @@ services:
   strategy:
     build:
       context: .
-      target: production
+      
     container_name: marketing-strategy
     command: ["npx", "tsx", "agents/strategy/index.ts"]
     environment:
@@ -90,7 +88,7 @@ services:
   content:
     build:
       context: .
-      target: production
+      
     container_name: marketing-content
     command: ["npx", "tsx", "agents/content/index.ts"]
     environment:
@@ -121,7 +119,7 @@ services:
   distribution:
     build:
       context: .
-      target: production
+      
     container_name: marketing-distribution
     command: ["npx", "tsx", "agents/distribution/index.ts"]
     environment:
@@ -170,7 +168,7 @@ services:
   community:
     build:
       context: .
-      target: production
+      
     container_name: marketing-community
     command: ["npx", "tsx", "agents/community/index.ts"]
     environment:
@@ -201,7 +199,7 @@ services:
   partnerships:
     build:
       context: .
-      target: production
+      
     container_name: marketing-partnerships
     command: ["npx", "tsx", "agents/partnerships/index.ts"]
     environment:
@@ -232,7 +230,7 @@ services:
   analytics:
     build:
       context: .
-      target: production
+      
     container_name: marketing-analytics
     command: ["npx", "tsx", "agents/analytics/index.ts"]
     environment:
@@ -263,7 +261,7 @@ services:
   proof:
     build:
       context: .
-      target: production
+      
     container_name: marketing-proof
     command: ["npx", "tsx", "agents/proof/index.ts"]
     environment:
