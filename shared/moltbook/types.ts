@@ -14,7 +14,9 @@ export type EventType =
   | 'CIRCUIT_BREAKER_CLOSED'
   | 'ARTIFACT_CREATED'
   | 'PIPELINE_RUN_START'
-  | 'PIPELINE_RUN_END';
+  | 'PIPELINE_RUN_END'
+  | 'AGENT_ACTION'
+  | 'ERROR';
 
 export type SourceAgent =
   | 'orchestrator'
@@ -24,13 +26,14 @@ export type SourceAgent =
   | 'community'
   | 'partnerships'
   | 'analytics'
-  | 'proof';
+  | 'proof'
+  | string; // Allow dynamic agent names like 'distribution:telegram'
 
-export type EventStatus = 'ok' | 'blocked' | 'failed' | 'retrying';
+export type EventStatus = 'ok' | 'blocked' | 'failed' | 'retrying' | 'success' | 'started' | 'skipped' | 'partial' | 'allowed' | 'error';
 
-export type Platform = 'github' | 'telegram' | 'x' | 'reddit' | 'hn' | 'discord';
+export type Platform = 'github' | 'telegram' | 'x' | 'reddit' | 'hn' | 'discord' | 'internal';
 
-export type ActionType = 'post' | 'reply' | 'comment' | 'dm' | 'submit' | 'issue' | 'discussion';
+export type ActionType = 'post' | 'reply' | 'comment' | 'dm' | 'submit' | 'issue' | 'discussion' | 'brief' | 'generate' | 'distribute' | 'monitor' | 'leads' | 'report' | 'proof' | 'pipeline';
 
 export interface MoltEvent {
   event_id: string;           // UUID

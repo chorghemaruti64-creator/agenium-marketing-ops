@@ -5,8 +5,13 @@
   "description": "Shared modules for Marketing Agent Swarm",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
+  },
   "scripts": {
     "build": "tsc",
+    "build:agents": "cd .. && npm run build:all",
     "test": "vitest run",
     "test:watch": "vitest",
     "demo:policy": "npx tsx policy/demo.ts",

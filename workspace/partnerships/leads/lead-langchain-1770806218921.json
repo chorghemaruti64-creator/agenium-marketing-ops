@@ -1,0 +1,13 @@
+{
+  "id": "lead-langchain-1770806218921",
+  "name": "LangChain",
+  "type": "tooling",
+  "description": "Developer tools, SDKs, frameworks",
+  "contactMethod": "twitter",
+  "priority": "high",
+  "status": "outreach-drafted",
+  "outreachDraft": "Hey LangChain team!\n\nLove what you're building! Quick outreach from Agenium.\n\nWe're working on the agent:// protocol - essentially a DNS layer for AI agents. It enables agents to discover and communicate with each other using human-readable addresses.\n\nI think there's an interesting integration opportunity with LangChain:\n- Native agent:// support in your SDK\n- Example implementations for your users\n- Joint documentation and tutorials\n\nInterested in exploring this? Would be great to chat!\n\nCheers,\nAgenium Team",
+  "notes": "Value proposition: Native integrations, joint documentation, SDK support",
+  "createdAt": "2026-02-11T10:36:58.920Z",
+  "updatedAt": "2026-02-11T10:36:58.920Z"
+}

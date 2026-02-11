@@ -21,9 +21,9 @@ import {
 import {
   appendEvent,
   appendEventBatch,
-  logPolicyDecision,
-  logPlatformAttempt,
-  logPlatformResult,
+  logPolicyDecisionLegacy as logPolicyDecision,
+  logPlatformAttemptLegacy as logPlatformAttempt,
+  logPlatformResultLegacy as logPlatformResult,
   logRetryScheduled,
   logCircuitBreaker,
   logArtifact,

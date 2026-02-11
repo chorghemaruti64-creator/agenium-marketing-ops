@@ -109,11 +109,16 @@ export {
   logPolicyDecision,
   logPlatformAttempt,
   logPlatformResult,
+  logPolicyDecisionLegacy,
+  logPlatformAttemptLegacy,
+  logPlatformResultLegacy,
   logRetryScheduled,
   logCircuitBreaker,
   logArtifact,
   logPipelineStart,
   logPipelineEnd,
+  logAgentAction,
+  logError,
   getEventFiles,
   checkIntegrity,
 } from './moltbook/ledger.js';
@@ -139,6 +144,8 @@ export {
   countBy,
   getTopDenyReasons,
   query as queryEvents,
+  queryByDate,
+  queryByPlatform,
 } from './moltbook/reader.js';
 
 export type { QueryFilters } from './moltbook/reader.js';
@@ -165,3 +172,46 @@ export {
 export type {
   AuditEvent,
 } from './moltbook/audit.js';
+
+// Platforms
+export {
+  postToPlatform,
+  postToGitHub,
+  postToTelegram,
+  postToX,
+  postToReddit,
+  postToHN,
+  postToDiscord,
+  getConfiguredPlatforms,
+  executeWithPolicy,
+  isCircuitOpen,
+  generateHNDraft,
+} from './platforms/index.js';
+
+export type {
+  Platform as ConnectorPlatform,
+  PlatformCredentials,
+  PlatformAction as ConnectorAction,
+  PlatformResult,
+  ConnectorConfig,
+} from './platforms/types.js';
+
+// Agent Utilities
+export {
+  loadAgentConfig,
+  isStopAll,
+  isPublishEnabled,
+  generateTraceId,
+  generateFingerprint as agentFingerprint,
+  today,
+  ensureDir,
+  writeFile as agentWriteFile,
+  readFile as agentReadFile,
+  listFiles,
+  startHealthServer,
+  sleep,
+} from './agent/utils.js';
+
+export type {
+  AgentConfig,
+} from './agent/utils.js';

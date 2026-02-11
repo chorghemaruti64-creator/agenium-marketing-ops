@@ -6,9 +6,9 @@
 
 import { MoltEvent, SourceAgent, Platform, ActionType } from './types.js';
 import { 
-  logPolicyDecision,
-  logPlatformAttempt,
-  logPlatformResult,
+  logPolicyDecisionLegacy,
+  logPlatformAttemptLegacy,
+  logPlatformResultLegacy,
   logArtifact,
   appendEvent,
 } from './ledger.js';
@@ -64,7 +64,7 @@ export function audit(
   const auditEvent = createAuditEvent(action, decision);
   
   // Log to the new ledger system
-  logPolicyDecision(
+  logPolicyDecisionLegacy(
     sourceAgent,
     action.platform as Platform,
     action.action_type as ActionType,
@@ -109,7 +109,7 @@ export function auditPlatformAttempt(
   sourceAgent: SourceAgent = 'distribution',
   retryCount: number = 0
 ): MoltEvent {
-  return logPlatformAttempt(
+  return logPlatformAttemptLegacy(
     sourceAgent,
     platform,
     actionType,
@@ -137,7 +137,7 @@ export function auditPlatformResult(
     latencyMs?: number;
   }
 ): MoltEvent {
-  return logPlatformResult(
+  return logPlatformResultLegacy(
     sourceAgent,
     platform,
     actionType,

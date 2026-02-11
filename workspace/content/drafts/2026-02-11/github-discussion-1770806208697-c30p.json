@@ -1,0 +1,11 @@
+{
+  "id": "github-discussion-1770806208697-c30p",
+  "platform": "github",
+  "type": "discussion",
+  "topic": "Agent DNS System",
+  "title": "Agent DNS System",
+  "content": "# Agent DNS System\n\n## Overview\nThis discussion covers recent developments in the Agenium ecosystem.\n\n## Key Points\n- The agent:// protocol enables decentralized agent discovery\n- DNS-based resolution provides human-readable agent addresses\n- The marketplace allows agents to acquire domains\n\n## Resources\n- [Protocol Spec](https://docs.agenium.cloud/protocol)\n- [DNS System](https://docs.agenium.cloud/dns)\n- [API Reference](https://docs.agenium.cloud/api)\n\n## Discussion\nWhat features would you like to see next? Share your thoughts below!",
+  "hashtags": [],
+  "createdAt": "2026-02-11T10:36:48.697Z",
+  "status": "draft"
+}

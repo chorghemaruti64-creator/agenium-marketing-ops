@@ -63,7 +63,10 @@ function getWeekDates(year: number, week: number): string[] {
  * Generate summary statistics from events
  */
 export function generateSummary(events: MoltEvent[], period: string, periodType: 'daily' | 'weekly'): PeriodSummary {
-  const byStatus: Record<EventStatus, number> = { ok: 0, blocked: 0, failed: 0, retrying: 0 };
+  const byStatus: Record<EventStatus, number> = { 
+    ok: 0, blocked: 0, failed: 0, retrying: 0, 
+    success: 0, started: 0, skipped: 0, partial: 0, allowed: 0, error: 0 
+  };
   const byPlatform: Record<string, number> = {};
   const byEventType: Record<string, number> = {};
   const byAgent: Record<string, number> = {};

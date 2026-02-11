@@ -13,6 +13,36 @@ function getMoltbookPath(): string {
 }
 
 /**
+ * Read events with custom moltbook directory
+ * Used by agents that need to specify the path
+ */
+export function queryByDate(moltbookDir: string, date: string): MoltEvent[] {
+  const eventsDir = join(moltbookDir, 'events', date);
+  if (!existsSync(eventsDir)) return [];
+  
+  const files = readdirSync(eventsDir)
+    .filter(f => f.endsWith('.jsonl'))
+    .map(f => join(eventsDir, f));
+  
+  const events: MoltEvent[] = [];
+  for (const file of files) {
+    events.push(...readJsonlFile(file));
+  }
+  
+  return events.sort((a, b) => a.ts.localeCompare(b.ts));
+}
+
+/**
+ * Query events by platform with custom moltbook directory
+ */
+export function queryByPlatform(moltbookDir: string, platform: Platform, date?: string): MoltEvent[] {
+  const targetDate = date || new Date().toISOString().split('T')[0];
+  const events = queryByDate(moltbookDir, targetDate);
+  
+  return events.filter(e => e.platform === platform);
+}
+
+/**
  * Read all events from a JSONL file
  */
 function readJsonlFile(filepath: string): MoltEvent[] {

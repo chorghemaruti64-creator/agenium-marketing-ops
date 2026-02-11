@@ -140,9 +140,9 @@ export function writeEvent(event: MoltEvent): MoltEvent {
 }
 
 /**
- * Create and write a policy decision event
+ * Create and write a policy decision event (legacy signature)
  */
-export function logPolicyDecision(
+export function logPolicyDecisionLegacy(
   sourceAgent: SourceAgent,
   platform: Platform,
   actionType: ActionType,
@@ -178,9 +178,9 @@ export function logPolicyDecision(
 }
 
 /**
- * Log platform attempt
+ * Log platform attempt (legacy signature)
  */
-export function logPlatformAttempt(
+export function logPlatformAttemptLegacy(
   sourceAgent: SourceAgent,
   platform: Platform,
   actionType: ActionType,
@@ -208,9 +208,9 @@ export function logPlatformAttempt(
 }
 
 /**
- * Log platform result
+ * Log platform result (legacy signature)
  */
-export function logPlatformResult(
+export function logPlatformResultLegacy(
   sourceAgent: SourceAgent,
   platform: Platform,
   actionType: ActionType,
@@ -466,6 +466,154 @@ export function getEventFiles(date: string): string[] {
     .map(f => join(eventsDir, f))
     .sort();
 }
+
+// ============================================================================
+// Agent-friendly logging functions (accept moltbookDir as first parameter)
+// These are used by the agent/platform code that doesn't rely on env vars
+// ============================================================================
+
+interface AgentLogParams {
+  sourceAgent: string;
+  platform?: Platform;
+  actionType?: ActionType;
+  fingerprint?: string;
+  traceId?: string;
+  status?: EventStatus;
+  summary?: string;
+  data?: Record<string, any>;
+  links?: string[];
+}
+
+/**
+ * Append event to specific moltbook directory
+ */
+function appendEventToDir(moltbookDir: string, event: MoltEvent): string {
+  const today = getToday();
+  const eventsDir = join(moltbookDir, 'events', today);
+  ensureDir(eventsDir);
+  
+  const filename = getEventFilename(event);
+  const filepath = join(eventsDir, filename);
+  
+  const line = JSON.stringify(event) + '\n';
+  atomicAppend(filepath, line);
+  
+  return filepath;
+}
+
+/**
+ * Log policy decision (agent-friendly version)
+ */
+export function logPolicyDecision(moltbookDir: string, params: AgentLogParams): Promise<MoltEvent> {
+  const event: MoltEvent = {
+    event_id: randomUUID(),
+    ts: new Date().toISOString(),
+    source_agent: params.sourceAgent as SourceAgent,
+    event_type: 'POLICY_DECISION',
+    platform: params.platform,
+    action_type: params.actionType,
+    fingerprint: params.fingerprint,
+    trace_id: params.traceId ?? randomUUID(),
+    status: params.status ?? 'ok',
+    summary: params.summary ?? 'Policy decision',
+    data: params.data ?? {},
+    links: params.links,
+  };
+  
+  appendEventToDir(moltbookDir, event);
+  return Promise.resolve(event);
+}
+
+/**
+ * Log platform attempt (agent-friendly version)
+ */
+export function logPlatformAttempt(moltbookDir: string, params: AgentLogParams): Promise<MoltEvent> {
+  const event: MoltEvent = {
+    event_id: randomUUID(),
+    ts: new Date().toISOString(),
+    source_agent: params.sourceAgent as SourceAgent,
+    event_type: 'PLATFORM_ATTEMPT',
+    platform: params.platform,
+    action_type: params.actionType,
+    fingerprint: params.fingerprint,
+    trace_id: params.traceId ?? randomUUID(),
+    status: 'ok',
+    summary: params.summary ?? `Attempting ${params.actionType} on ${params.platform}`,
+    data: params.data ?? {},
+  };
+  
+  appendEventToDir(moltbookDir, event);
+  return Promise.resolve(event);
+}
+
+/**
+ * Log platform result (agent-friendly version)
+ */
+export function logPlatformResult(moltbookDir: string, params: AgentLogParams): Promise<MoltEvent> {
+  const event: MoltEvent = {
+    event_id: randomUUID(),
+    ts: new Date().toISOString(),
+    source_agent: params.sourceAgent as SourceAgent,
+    event_type: 'PLATFORM_RESULT',
+    platform: params.platform,
+    action_type: params.actionType,
+    fingerprint: params.fingerprint,
+    trace_id: params.traceId ?? randomUUID(),
+    status: params.status ?? 'ok',
+    summary: params.summary ?? `Result for ${params.actionType} on ${params.platform}`,
+    data: params.data ?? {},
+    links: params.links,
+  };
+  
+  appendEventToDir(moltbookDir, event);
+  return Promise.resolve(event);
+}
+
+/**
+ * Log agent action (generic logging for agent activities)
+ */
+export function logAgentAction(moltbookDir: string, params: AgentLogParams): Promise<MoltEvent> {
+  const event: MoltEvent = {
+    event_id: randomUUID(),
+    ts: new Date().toISOString(),
+    source_agent: params.sourceAgent as SourceAgent,
+    event_type: 'AGENT_ACTION',
+    platform: params.platform,
+    action_type: params.actionType,
+    fingerprint: params.fingerprint,
+    trace_id: params.traceId ?? randomUUID(),
+    status: params.status ?? 'ok',
+    summary: params.summary ?? 'Agent action',
+    data: params.data ?? {},
+    links: params.links,
+  };
+  
+  appendEventToDir(moltbookDir, event);
+  return Promise.resolve(event);
+}
+
+/**
+ * Log error (agent-friendly version)
+ */
+export function logError(moltbookDir: string, params: AgentLogParams): Promise<MoltEvent> {
+  const event: MoltEvent = {
+    event_id: randomUUID(),
+    ts: new Date().toISOString(),
+    source_agent: params.sourceAgent as SourceAgent,
+    event_type: 'ERROR',
+    platform: params.platform,
+    fingerprint: params.fingerprint,
+    trace_id: params.traceId ?? randomUUID(),
+    status: 'error',
+    summary: params.summary ?? 'Error occurred',
+    data: params.data ?? {},
+  };
+  
+  appendEventToDir(moltbookDir, event);
+  return Promise.resolve(event);
+}
+
+// ============================================================================
 
 /**
  * Check for partial/corrupt files

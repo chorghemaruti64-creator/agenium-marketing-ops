@@ -8,9 +8,9 @@ import { randomUUID } from 'crypto';
 import { mkdirSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import {
-  logPolicyDecision,
-  logPlatformAttempt,
-  logPlatformResult,
+  logPolicyDecisionLegacy as logPolicyDecision,
+  logPlatformAttemptLegacy as logPlatformAttempt,
+  logPlatformResultLegacy as logPlatformResult,
   logRetryScheduled,
   logCircuitBreaker,
   logArtifact,

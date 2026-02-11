@@ -1,0 +1,1 @@
+{"version":3,"file":"telegram.d.ts","sourceRoot":"","sources":["../../platforms/telegram.ts"],"names":[],"mappings":"AAAA;;GAEG;AAEH,OAAO,KAAK,EAAE,cAAc,EAAE,cAAc,EAAE,eAAe,EAAE,MAAM,YAAY,CAAC;AAiElF,wBAAsB,cAAc,CAClC,MAAM,EAAE,cAAc,EACtB,MAAM,EAAE,eAAe,GACtB,OAAO,CAAC,cAAc,CAAC,CAczB"}

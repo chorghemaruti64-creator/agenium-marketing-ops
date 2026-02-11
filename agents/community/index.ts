@@ -1,0 +1,190 @@
+/**
+ * Community Agent
+ * Monitors replies/mentions and generates responses
+ */
+
+import * as path from 'path';
+import {
+  loadAgentConfig,
+  isStopAll,
+  today,
+  ensureDir,
+  writeFile,
+  readFile,
+  startHealthServer,
+  generateTraceId,
+} from '../../shared/agent/utils.js';
+import { logAgentAction, logError } from '../../shared/moltbook/ledger.js';
+
+const AGENT_NAME = 'community';
+
+interface CommunityTask {
+  id: string;
+  platform: string;
+  type: 'reply' | 'mention' | 'comment';
+  sourceUrl?: string;
+  authorName?: string;
+  originalContent?: string;
+  suggestedResponse: string;
+  status: 'pending' | 'auto-replied' | 'manual' | 'skipped';
+  createdAt: string;
+}
+
+// Response templates
+const RESPONSE_TEMPLATES = {
+  greeting: [
+    "Thanks for reaching out! 👋 Happy to help with any questions about Agenium.",
+    "Hey! Great to hear from you. What would you like to know about the agent:// protocol?",
+    "Welcome to the Agenium community! 🎉 Let us know if you have any questions.",
+  ],
+  technical: [
+    "Good question! The agent:// protocol works by using DNS-based discovery. Each agent has a domain that resolves to their endpoint.",
+    "The DNS system maps agent addresses to their actual endpoints, similar to how regular DNS works for websites.",
+    "You can find detailed documentation at docs.agenium.cloud - let me know if you need help with anything specific!",
+  ],
+  appreciation: [
+    "Thanks for the support! 🙏 We're excited about what we're building.",
+    "Really appreciate the kind words! The community is what makes Agenium special.",
+    "Thank you! We're working hard to make agent-to-agent communication seamless.",
+  ],
+  generic: [
+    "Thanks for your comment! Feel free to ask if you have any questions about Agenium.",
+    "Appreciate you engaging with us! Let us know how we can help.",
+    "Great to see the interest! Happy to discuss more about the ecosystem.",
+  ],
+};
+
+function selectResponse(type: keyof typeof RESPONSE_TEMPLATES): string {
+  const templates = RESPONSE_TEMPLATES[type];
+  return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function categorizeAndRespond(content?: string): { category: string; response: string } {
+  if (!content) {
+    return { category: 'generic', response: selectResponse('generic') };
+  }
+
+  const lower = content.toLowerCase();
+
+  if (/hello|hi|hey|gm|good morning/i.test(lower)) {
+    return { category: 'greeting', response: selectResponse('greeting') };
+  }
+
+  if (/how|what|why|does|can|protocol|dns|work/i.test(lower)) {
+    return { category: 'technical', response: selectResponse('technical') };
+  }
+
+  if (/thanks|thank|awesome|great|amazing|love|nice/i.test(lower)) {
+    return { category: 'appreciation', response: selectResponse('appreciation') };
+  }
+
+  return { category: 'generic', response: selectResponse('generic') };
+}
+
+async function run(): Promise<void> {
+  const config = loadAgentConfig(AGENT_NAME);
+  const traceId = generateTraceId();
+
+  console.log(`[${AGENT_NAME}] Starting...`);
+
+  if (isStopAll(config.configDir)) {
+    console.log(`[${AGENT_NAME}] STOP_ALL active, exiting`);
+    process.exit(0);
+  }
+
+  try {
+    const date = today();
+    const tasksDir = path.join(config.workspaceDir, 'community', 'tasks', date);
+    const responsesDir = path.join(config.workspaceDir, 'community', 'responses', date);
+
+    // In a real implementation, this would:
+    // 1. Poll platform APIs for mentions/replies
+    // 2. Create tasks for new interactions
+    // 3. Auto-respond if policy allows
+
+    // For now, generate sample task demonstrating the flow
+    const sampleTask: CommunityTask = {
+      id: `task-${Date.now()}`,
+      platform: 'discord',
+      type: 'comment',
+      authorName: 'example_user',
+      originalContent: 'How does the agent:// protocol work?',
+      suggestedResponse: categorizeAndRespond('How does the agent:// protocol work?').response,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    ensureDir(tasksDir);
+    ensureDir(responsesDir);
+
+    // Write sample task (in production, these would come from API polling)
+    const taskPath = path.join(tasksDir, `${sampleTask.id}.json`);
+    if (!readFile(taskPath)) {
+      writeFile(taskPath, JSON.stringify(sampleTask, null, 2));
+    }
+
+    // Generate suggested responses report
+    const reportPath = path.join(responsesDir, 'suggested-responses.md');
+    const report = `# Community Responses - ${date}
+
+## Pending Tasks
+
+| Platform | Type | Author | Suggested Response |
+|----------|------|--------|-------------------|
+| ${sampleTask.platform} | ${sampleTask.type} | ${sampleTask.authorName} | ${sampleTask.suggestedResponse.slice(0, 50)}... |
+
+## Notes
+- Auto-reply is disabled by default
+- Review suggested responses before enabling automation
+- Platform API polling not yet implemented (requires tokens)
+
+---
+Generated by ${AGENT_NAME} at ${new Date().toISOString()}
+`;
+
+    writeFile(reportPath, report);
+
+    console.log(`[${AGENT_NAME}] Generated community report`);
+
+    await logAgentAction(config.moltbookDir, {
+      sourceAgent: AGENT_NAME,
+      platform: 'internal',
+      actionType: 'monitor',
+      fingerprint: `community-${date}`,
+      traceId,
+      status: 'success',
+      summary: `Community monitoring complete for ${date}`,
+      data: {
+        tasksDir,
+        responsesDir,
+        note: 'API polling not yet implemented',
+      },
+    });
+  } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    console.error(`[${AGENT_NAME}] Error:`, error);
+
+    await logError(config.moltbookDir, {
+      sourceAgent: AGENT_NAME,
+      platform: 'internal',
+      fingerprint: `error-${Date.now()}`,
+      traceId,
+      status: 'error',
+      summary: `Community agent error: ${error}`,
+      data: { error },
+    });
+
+    process.exit(1);
+  }
+}
+
+// Main
+const config = loadAgentConfig(AGENT_NAME);
+
+if (config.runOnce) {
+  run().then(() => process.exit(0)).catch(() => process.exit(1));
+} else {
+  startHealthServer(3004, AGENT_NAME);
+  run();
+  setInterval(run, 15 * 60 * 1000); // Run every 15 min
+}

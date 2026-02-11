@@ -1,0 +1,27 @@
+{
+  "name": "marketing-ops",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Autonomous Marketing Agent Swarm for Agenium Ecosystem",
+  "scripts": {
+    "build": "npm run build:shared && npm run build:agents",
+    "build:shared": "cd shared && npm run build",
+    "build:agents": "node scripts/build-agents.js",
+    "test": "cd shared && npm test",
+    "demo": "cd shared && npm run demo",
+    "run-once": "./bin/run-once.sh",
+    "run-once:live": "./bin/run-once.sh --live",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "status": "./bin/status.sh",
+    "moltbook:status": "./bin/moltbook-status.sh"
+  },
+  "workspaces": [
+    "shared"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "lead-railway-1770806218921",
+  "name": "Railway",
+  "type": "infrastructure",
+  "description": "Cloud providers, hosting services, infrastructure platforms",
+  "contactMethod": "twitter",
+  "priority": "high",
+  "status": "outreach-drafted",
+  "outreachDraft": "Hi Railway team!\n\nI'm reaching out from Agenium about a potential collaboration.\n\nWe're building the agent:// protocol - a DNS-based system for agent-to-agent communication. Think of it as the addressing layer for AI agents, similar to how HTTP/DNS works for the web.\n\nWe believe there's a strong alignment with Railway's infrastructure offering. Some ideas:\n- Featured integration in our docs\n- Co-marketing to our growing developer community\n- Technical collaboration on agent hosting best practices\n\nWould love to explore how we might work together. Happy to share more details or jump on a quick call.\n\nBest,\nAgenium Team",
+  "notes": "Value proposition: Infrastructure credits, co-marketing, featured integrations",
+  "createdAt": "2026-02-11T10:36:58.920Z",
+  "updatedAt": "2026-02-11T10:36:58.920Z"
+}

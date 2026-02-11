@@ -1,0 +1,24 @@
+{
+  "date": "2026-02-11",
+  "summary": {
+    "totalEvents": 3,
+    "successfulPosts": 0,
+    "failedPosts": 0,
+    "policyBlocks": 0,
+    "platformBreakdown": {}
+  },
+  "kpis": {
+    "postSuccessRate": 100,
+    "avgPostsPerDay": 0,
+    "policyComplianceRate": 100
+  },
+  "moltbookStats": {
+    "totalLogs": 3,
+    "byEventType": {
+      "AGENT_ACTION": 3
+    },
+    "byStatus": {
+      "success": 3
+    }
+  }
+}
